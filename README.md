@@ -68,7 +68,7 @@ Particles move through a $K$-dimensional threshold search space according to the
 
 $$V_i^{(t+1)} = w \cdot V_i^{(t)} + c_1 r_1 \left(P_{best, i} - X_i^{(t)}\right) + c_2 r_2 \left(G_{best} - X_i^{(t)}\right)$$
 
-$$X_i^{(t+1)} = \operatorname{clip}\left(X_i^{(t)} + V_i^{(t+1)},\, 0,\, 255\right)$$
+$$X_i^{(t+1)} = \mathrm{clip}\left(X_i^{(t)} + V_i^{(t+1)}, 0, 255\right)$$
 
 * $w = 0.7$: Inertia weight regulating momentum.
 * $c_1 = 1.5, c_2 = 1.5$: Cognitive and social acceleration coefficients.
