@@ -1,0 +1,6 @@
+method,accuracy,precision,recall,f1_score
+Original MRI,0.875,0.8958,0.875,0.8726
+GA Segmented,0.6667,0.7134,0.6667,0.6758
+PSO Segmented,0.625,0.6801,0.625,0.6273
+DE Segmented,0.625,0.6801,0.625,0.6273
+Hybrid PSO-GA,0.625,0.6801,0.625,0.6273
