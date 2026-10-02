@@ -35,7 +35,7 @@ Magnetic Resonance Imaging (MRI) is a primary modality for diagnosing brain path
 
 While **Otsu’s method** provides an optimal nonparametric criterion for segmenting intensity distributions by maximizing between-class variance, computing $K$ thresholds exhaustively incurs exponential computational complexity:
 
-$$\mathcal{O}\left( inom{L}{K} ight) pprox \mathcal{O}(L^K)$$
+$$\mathcal{O}\left( \binom{L}{K} \right) \approx \mathcal{O}(L^K)$$
 
 For $L = 256$ intensity levels and $K \ge 2$, brute-force enumeration quickly becomes computationally prohibitive. This project resolves this limitation by:
 1. **Accelerating Threshold Optimization**: Utilizing continuous and discrete metaheuristic search strategies (GA, PSO, DE).
@@ -56,7 +56,7 @@ Given a normalized 256-bin grayscale intensity histogram $p(i)$ where $i \in [0,
   $$\omega_k = \sum_{i=t_k}^{t_{k+1}-1} p(i)$$
 
 * **Class Mean Intensity**:
-  $$\mu_k = rac{1}{\omega_k} \sum_{i=t_k}^{t_{k+1}-1} i \cdot p(i)$$
+  $$\mu_k = \frac{1}{\omega_k} \sum_{i=t_k}^{t_{k+1}-1} i \cdot p(i)$$
 
 * **Fitness / Objective Function**: Maximize between-class variance:
   $$\sigma_B^2(t_1, t_2, \dots, t_K) = \sum_{k=0}^{K} \omega_k (\mu_k - \mu_T)^2$$
@@ -66,8 +66,9 @@ Given a normalized 256-bin grayscale intensity histogram $p(i)$ where $i \in [0,
 ### 2. Particle Swarm Optimization (PSO)
 Particles move through a $K$-dimensional threshold search space according to their personal best ($P_{best}$) and the swarm's global best ($G_{best}$):
 
-$$V_i^{(t+1)} = w \cdot V_i^{(t)} + c_1 r_1 \left(P_{best, i} - X_i^{(t)}ight) + c_2 r_2 \left(G_{best} - X_i^{(t)}ight)$$
-$$X_i^{(t+1)} = 	ext{clip}\left(X_i^{(t)} + V_i^{(t+1)}, 0, 255ight)$$
+$$V_i^{(t+1)} = w \cdot V_i^{(t)} + c_1 r_1 \left(P_{best, i} - X_i^{(t)}\right) + c_2 r_2 \left(G_{best} - X_i^{(t)}\right)$$
+
+$$X_i^{(t+1)} = \operatorname{clip}\left(X_i^{(t)} + V_i^{(t+1)},\, 0,\, 255\right)$$
 
 * $w = 0.7$: Inertia weight regulating momentum.
 * $c_1 = 1.5, c_2 = 1.5$: Cognitive and social acceleration coefficients.
@@ -86,7 +87,9 @@ $$X_i^{(t+1)} = 	ext{clip}\left(X_i^{(t)} + V_i^{(t+1)}, 0, 255ight)$$
 
 ### 4. Differential Evolution (DE)
 Implements classical `DE/rand/1/bin` mutation and binomial crossover:
+
 $$\mathbf{v}_i = \mathbf{x}_{r1} + F \cdot (\mathbf{x}_{r2} - \mathbf{x}_{r3})$$
+
 where $F = 0.5$ is the differential scaling factor and $CR = 0.8$ is the crossover probability.
 
 ---
@@ -109,9 +112,9 @@ To verify that segmented regions yield clinically meaningful features, we extrac
 * **Morphological Attributes**: Foreground Area Ratio, Perimeter.
 * **Second-Order Texture Descriptors (GLCM)**:
   * Contrast: $\sum_{i,j} |i - j|^2 p(i,j)$
-  * Homogeneity: $\sum_{i,j} rac{p(i,j)}{1 + |i - j|}$
+  * Homogeneity: $\sum_{i,j} \frac{p(i,j)}{1 + |i - j|}$
   * Energy: $\sum_{i,j} p(i,j)^2$
-  * Correlation: $\sum_{i,j} rac{(i - \mu_i)(j - \mu_j) p(i,j)}{\sigma_i \sigma_j}$
+  * Correlation: $\sum_{i,j} \frac{(i - \mu_i)(j - \mu_j) p(i,j)}{\sigma_i \sigma_j}$
 
 Extracted features are classified via a **Random Forest Classifier** ($50$ estimators, stratified train/test split).
 
@@ -129,7 +132,7 @@ Extracted features are classified via a **Random Forest Classifier** ($50$ estim
 ---
 
 ### Multi-Run Quantitative Benchmark
-Summary of $10$ independent stochastic runs per test image ($N_{	ext{runs}} = 10$, Thresholds $K = 2$, Population $= 30$, Iterations $= 100$):
+Summary of $10$ independent stochastic runs per test image ($N_{\text{runs}} = 10$, Thresholds $K = 2$, Population $= 30$, Iterations $= 100$):
 
 | Image ID | Algorithm | Best Otsu Fitness | Mean Fitness | Std Dev | Mean Runtime (s) | Iters to 99% Conv. |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
@@ -183,6 +186,7 @@ Hybrid-PSO-GA-Based-Multilevel-Otsu-MRI-Segmentation-with-Machine-Learning-Valid
 ├── main.py                     # Full Hybrid PSO-GA + DE + ML Validation pipeline
 ├── baseline_pso_ga.py          # Standalone baseline PSO vs GA Otsu segmentation
 ├── requirements.txt            # Python dependencies
+├── LICENSE                     # MIT License
 ├── .gitignore                  # Git ignore rules
 ├── README.md                   # Comprehensive documentation and benchmarks
 └── results/                    # Benchmark figures and exported CSV records
